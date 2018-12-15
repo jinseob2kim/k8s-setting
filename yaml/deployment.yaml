@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rshiny
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rshiny
+  template:
+    metadata:
+      labels:
+        app: rshiny
+    spec:
+      containers:
+        - name: docker-rshiny
+          image: jinseob2kim/docker-rshiny
+          env:
+            - name: USER
+              value: "js"
+            - name: PASSWORD
+              value: "js"
+          ports:
+            - name: rstudio 
+              containerPort: 8787
+            - name: shiny 
+              containerPort: 3838
+          
