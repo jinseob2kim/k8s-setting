@@ -1,33 +1,43 @@
-
 ## Digital ocean
-sudo cp /etc/kubernetes/admin.conf $HOME/
-sudo chown $(id -u):$(id -g) $HOME/admin.conf
-export KUBECONFIG=$HOME/admin.conf
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  
+export  KUBECONFIG=/home/js/Docker/k8s-setting/k8s-1-12-3-do-1-nyc1-1544917662600-kubeconfig.yaml
 
-cd /home/js/Docker/k8s-setting/yaml
 
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get nodes
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" create -f ./deployment.yaml
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" create -f ./service.yaml
+## See node
+kubectl get nodes
 
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get svc
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" scale deploy rshiny --replicas=2
+## Run
+kubectl create -f yaml/deployment.yaml
+kubectl create -f yaml/service.yaml
+
+## Update
+kubectl apply -f yaml/deployment.yaml
+
+kubectl exec -it rshiny-74f459c4f6-lt6qj -- bin/bash
+
+
+## See service
+kubectl get svc
+kubectl scale deploy rshiny --replicas=1
 
 
 # Get commands with basic output
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get services                          # List all services in the namespace
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get pods --all-namespaces             # List all pods in all namespaces
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get pods -o wide                      # List all pods in the namespace, with more details
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get deployment rshiny                 # List a particular deployment
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" get pods --include-uninitialized      # List all pods in the namespace, including uninitialized ones
+kubectl get services                          # List all services in the namespace
+kubectl get pods --all-namespaces             # List all pods in all namespaces
+kubectl get pods -o wide                      # List all pods in the namespace, with more details
+kubectl get deployment rshiny                 # List a particular deployment
+kubectl get pods --include-uninitialized      # List all pods in the namespace, including uninitialized ones
 
 # Describe commands with verbose output
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" describe nodes rshiny
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" describe pods rshiny
+kubectl describe deployment rshiny
+kubectl describe service rshiny
 
 
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" delete deployment --all
-kubectl --kubeconfig="k8s-1-12-3-do-1-nyc1-1544875442129-kubeconfig.yaml" delete services --all
+kubectl delete deployment --all
+kubectl delete services --all
 
 
 

@@ -1,20 +1,30 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: rshiny
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: rshiny
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
   template:
     metadata:
       labels:
         app: rshiny
     spec:
+      volumes:
+        - name: shared-data
+          emptyDir: {}
       containers:
         - name: docker-rshiny
           image: jinseob2kim/docker-rshiny
+          imagePullPolicy: Always
           env:
             - name: USER
               value: "js"
@@ -25,4 +35,7 @@ spec:
               containerPort: 8787
             - name: shiny 
               containerPort: 3838
+          volumeMounts:
+            - mountPath: /home/js/ShinyApps
+              name: shared-data
           
